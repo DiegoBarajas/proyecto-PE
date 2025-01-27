@@ -36,10 +36,10 @@ int login(){
         if(i==2) printf(" - ULTIMO INTENTO\n\n");
         else printf("\n\n");
 
-        printf("\t> Ingrese su usuario: ");
+        printf("> Ingrese su usuario: ");
         scanf("%s", &user);
 
-        printf("\t> Ingrese su contrase%ca: ", 164);
+        printf("> Ingrese su contrase%ca: ", 164);
         scanf("%s", &passwd);
 
         int usr_indx = find_user(user);

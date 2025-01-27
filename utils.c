@@ -128,9 +128,9 @@ int confirm(const char *format, ...){
         printf("[ ATENCION ] ");
         vprintf(format, args);
         va_end(args);
-        printf("\n   [ S/Y/A/1 ] Aceptar");
-        printf("\n   [ N/C/X/0 ] Cancelar");
-        printf("\n\n\t> Ingrese su opcion: ");
+        printf("\n\t[ S/Y/A/1 ] Aceptar");
+        printf("\n\t[ N/C/X/0 ] Cancelar");
+        printf("\n\n> Ingrese su opcion: ");
         scanf("%c", &opt);
 
         switch(opt){

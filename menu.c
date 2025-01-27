@@ -7,14 +7,14 @@ char main_menu(){
     char opt;
 
     printf("\n[ MENU ] Seleccione la opcion deseada");
-    printf("\n [ A ] Cliente");
-    printf("\n [ B ] Servicio");
-    printf("\n [ C ] Pago");
-    printf("\n [ D ] Almacen");
-    printf("\n [ E ] Otro");
-    printf("\n [ F ] Salir");
+    printf("\n\t[ A ] Cliente");
+    printf("\n\t[ B ] Servicio");
+    printf("\n\t[ C ] Pago");
+    printf("\n\t[ D ] Almacen");
+    printf("\n\t[ E ] Otro");
+    printf("\n\t[ F ] Salir");
 
-    printf("\n\n\t> Ingrese su opcion: ");
+    printf("\n\n> Ingrese su opcion: ");
     scanf("%c", &opt);
 
     return tolower(opt);
