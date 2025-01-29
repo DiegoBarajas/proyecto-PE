@@ -79,7 +79,7 @@ void add_client() {
     // DATE
     while(1){
         flush();
-        printf(" > Ingrese el dia de registro: ");
+        printf(" > Ingrese el dia de registro (dd): ");
         scanf("%s", &day);
 
         if(is_number(day) == 1){
@@ -93,7 +93,7 @@ void add_client() {
 
     while(1){
         flush();
-        printf(" > Ingrese el mes de registro: ");
+        printf(" > Ingrese el mes de registro (mm): ");
         scanf("%s", &month);
 
         if(is_number(month) == 1){
@@ -107,7 +107,7 @@ void add_client() {
 
     while(1){
         flush();
-        printf(" > Ingrese el a%co de registro: ", 164);
+        printf(" > Ingrese el a%co de registro (aaaa): ", 164);
         scanf("%s", &year);
 
         if(is_number(year) == 1){
@@ -215,13 +215,13 @@ int search_by_account(char account[]){
 
 // Show only one client
 void show_client(int index){
-    printf("[ CLIENTE ] #%i\n\n", index+1);
-    printf("\tNombre(s): %s\n", clients[index].name);
-    printf("\tApellido(s): %s\n", clients[index].lastname);
-    printf("\tNumero de cuenta: %s\n", clients[index].account);
-    printf("\tFecha de registro: %s\n", clients[index].date);
-    printf("\tCorreo: %s\n", clients[index].email);
-    printf("\tCelular: %s\n", clients[index].phone);
-    printf("\tTelefono: %s\n", clients[index].telephone);
-    printf("\tContacto: %s\n\n", clients[index].contact);
+    printf("[ CLIENTE ] #%i\n", index+1);
+    printf("\tNombre(s):      %s\n", clients[index].name);
+    printf("\tApellido(s):    %s\n", clients[index].lastname);
+    printf("\tNum. Cuenta:    %s\n", clients[index].account);
+    printf("\tFecha registro: %s\n", clients[index].date);
+    printf("\tCorreo:         %s\n", clients[index].email);
+    printf("\tCelular:        %s\n", clients[index].phone);
+    printf("\tTelefono:       %s\n", clients[index].telephone);
+    printf("\tContacto:       %s\n\n", clients[index].contact);
 }
