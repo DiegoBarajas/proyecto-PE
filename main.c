@@ -7,7 +7,7 @@ void payment();
 void storage();
 void other();
 
-void main_(){
+void main(){
     draw_logo();
 
     int loggued = login();
@@ -60,7 +60,7 @@ void main_(){
 }
 
 
-void main(){
+void _main(){
     client();
 }
 
@@ -78,6 +78,10 @@ void client() {
                 break;
 
             case 'b': delete_client();
+                tries = 0;
+                break;
+
+            case 'c': show_all_clients();
                 tries = 0;
                 break;
 

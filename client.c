@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#define TOTAL_CLIENTS 100
+
+// Struct Client
 struct Client {
     char name[100];
     char lastname[100];
@@ -14,10 +17,17 @@ struct Client {
 };
 
 // Globals
-struct Client clients[100];
-int total_clients = 0;
+struct Client clients[TOTAL_CLIENTS];
+int current_clients = 0;
 
+/* Functions */
+// Add a new client
 void add_client() {
+    if(current_clients >= TOTAL_CLIENTS){
+        error("Base de datos llena");
+        return;
+    }
+
     char name[100];
     char lastname[100];
     char account[16];
@@ -57,7 +67,7 @@ void add_client() {
         printf(" > Ingrese el numero de cuenta del cliente: ");
         gets(account);
 
-        if(search_by_account(account) > 0){
+        if(search_by_account(account) >= 0){
             printf("\n[ ERROR ] Ese numero de cuenta ya fue registrado.\n");
             continue;
         }
@@ -154,44 +164,64 @@ void add_client() {
         printf("\n[ ERROR ] El numero debe tener exactamente 10 digitos numericos.\n");
     }
 
-    strcpy(clients[total_clients].name, name);
-    strcpy(clients[total_clients].lastname, lastname);
-    strcpy(clients[total_clients].account, account);
-    strcpy(clients[total_clients].date, date);
-    strcpy(clients[total_clients].email, email);
-    strcpy(clients[total_clients].phone, phone);
-    strcpy(clients[total_clients].telephone, telephone);
-    strcpy(clients[total_clients].contact, contact);
+    strcpy(clients[current_clients].name, name);
+    strcpy(clients[current_clients].lastname, lastname);
+    strcpy(clients[current_clients].account, account);
+    strcpy(clients[current_clients].date, date);
+    strcpy(clients[current_clients].email, email);
+    strcpy(clients[current_clients].phone, phone);
+    strcpy(clients[current_clients].telephone, telephone);
+    strcpy(clients[current_clients].contact, contact);
 
-    total_clients++;
+    current_clients++;
     success("Cliente registrado con exito!");
 }
 
+// Print all regustered clients
+void show_all_clients() {
+    if(current_clients == 0){
+        info("No hay ningun cliente almacenado");
+        return;
+    }
+
+    int i;
+    clear();
+    for(i=0;i<current_clients;i++){
+        show_client(i);
+    }
+
+    pause();
+}
+
+// Delete a client
 void delete_client() {
 
 }
 
+// Update data from a client
 void update_client() {
 }
 
+// Get index from a client
 int search_by_account(char account[]){
     int i;
 
-    for(i=0;i<total_clients;i++){
+    for(i=0;i<current_clients;i++){
         if(strcmp(clients[i].account, account) == 0) return i;
     }
 
     return -1;
 }
 
+// Show only one client
 void show_client(int index){
-    printf("\n\n[ CLIENTE ] #%i\n\n", index);
-    printf("Nombre(s): %s\n", clients[index].name);
-    printf("Apellido(s): %s\n", clients[index].lastname);
-    printf("Numero de cuenta: %s\n", clients[index].account);
-    printf("Fecha de registro: %s\n", clients[index].date);
-    printf("Correo: %s\n", clients[index].email);
-    printf("Celular: %s\n", clients[index].phone);
-    printf("Telefono: %s\n", clients[index].telephone);
-    printf("Contacto: %s\n\n\n", clients[index].contact);
+    printf("[ CLIENTE ] #%i\n\n", index+1);
+    printf("\tNombre(s): %s\n", clients[index].name);
+    printf("\tApellido(s): %s\n", clients[index].lastname);
+    printf("\tNumero de cuenta: %s\n", clients[index].account);
+    printf("\tFecha de registro: %s\n", clients[index].date);
+    printf("\tCorreo: %s\n", clients[index].email);
+    printf("\tCelular: %s\n", clients[index].phone);
+    printf("\tTelefono: %s\n", clients[index].telephone);
+    printf("\tContacto: %s\n\n", clients[index].contact);
 }

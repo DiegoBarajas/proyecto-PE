@@ -30,6 +30,7 @@ char client_menu(){
     printf("\n[ CLIENTE ] Seleccione la opcion deseada");
     printf("\n\t[ A ] Alta");
     printf("\n\t[ B ] Baja");
+    printf("\n\t[ C ] Ver todos los clientes");
     printf("\n\t[ E ] Editar");
     printf("\n\t[ S ] Salir");
 

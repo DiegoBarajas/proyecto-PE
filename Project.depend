@@ -27,3 +27,31 @@
 	<stdio.h>
 	<windows.h>
 
+1738156256 source:c:\users\diego\documents\codeblocks projects\project\logo.c
+	<stdio.h>
+	<conio.h>
+	<windows.h>
+	<unistd.h>
+
+1738157039 source:c:\users\diego\documents\codeblocks projects\project\main.c
+	<stdio.h>
+	<windows.h>
+
+1738156447 source:c:\users\diego\documents\codeblocks projects\project\menu.c
+	<stdio.h>
+	<ctype.h>
+
+1738156256 source:c:\users\diego\documents\codeblocks projects\project\user.c
+	<stdio.h>
+	<windows.h>
+	<string.h>
+	<unistd.h>
+
+1738156256 source:c:\users\diego\documents\codeblocks projects\project\utils.c
+	<stdio.h>
+	<windows.h>
+
+1738157012 source:c:\users\diego\documents\codeblocks projects\project\client.c
+	<stdio.h>
+	<ctype.h>
+
