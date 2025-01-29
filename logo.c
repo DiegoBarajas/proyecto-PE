@@ -40,10 +40,11 @@ void draw_logo(){
         current_row++;
     }
 
-    for(i=0;i<10;i++){
+    int timer = 5;
+    for(i=0;i<timer;i++){
         gotoxy(current_col, current_row+1);
         printf("====================== ");
-        printf("Inicializando en %i... ", 10-i);
+        printf("Inicializando en %i... ", timer-i);
         printf("======================\n");
         sleep(1);
     }

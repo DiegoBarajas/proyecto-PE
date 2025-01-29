@@ -10,6 +10,9 @@ void warning(const char *format, ...);
 void log(const char *format, ...);
 int confirm(const char *format, ...);
 void flush();
+int is_empty(char value[]);
+int is_empty(char value[]);
+int is_valid_email(char email[]);
 
 // Clear console
 void clear(){
@@ -50,7 +53,7 @@ void error(const char *format, ...){
 
     va_list args;
     va_start(args, format);
-    printf("\t[ ERROR ]: ");
+    printf("\n[ ERROR ]: ");
     vprintf(format, args);  // Imprime el mensaje con formato
     va_end(args);
 
@@ -67,7 +70,7 @@ void success(const char *format, ...){
 
     va_list args;
     va_start(args, format);
-    printf("\t[ EXITO ] ");
+    printf("\n[ EXITO ] ");
     vprintf(format, args);  // Imprime el mensaje con formato
     va_end(args);
 
@@ -84,7 +87,7 @@ void warning(const char *format, ...){
 
     va_list args;
     va_start(args, format);
-    printf("\t[ ATENCION ] ");
+    printf("\n[ ATENCION ] ");
     vprintf(format, args);  // Imprime el mensaje con formato
     va_end(args);
 
@@ -94,8 +97,6 @@ void warning(const char *format, ...){
     clear();
 }
 
-
-
 // Show Log message in console with formatted text
 void info(const char *format, ...){
     clear();
@@ -103,7 +104,7 @@ void info(const char *format, ...){
 
     va_list args;
     va_start(args, format);
-    printf("\t[ SISTEMA ] ");
+    printf("\n[ SISTEMA ] ");
     vprintf(format, args);
     va_end(args);
 
@@ -125,12 +126,12 @@ int confirm(const char *format, ...){
         clear();
         flush();
 
-        printf("[ ATENCION ] ");
+        printf("\n[ CONFIRMAR ] ");
         vprintf(format, args);
         va_end(args);
         printf("\n\t[ S/Y/A/1 ] Aceptar");
         printf("\n\t[ N/C/X/0 ] Cancelar");
-        printf("\n\n> Ingrese su opcion: ");
+        printf("\n\n > Ingrese su opcion: ");
         scanf("%c", &opt);
 
         switch(opt){
@@ -155,3 +156,34 @@ void flush(){
     fflush(stdin);
 }
 
+// Comprobe if a str is empty
+int is_empty(char value[]){
+    if (value[0] == '\0') return 1;
+    return 0;
+}
+
+// Comprobe if a str is a number
+int is_number(char value[]){
+    int i;
+    if (is_empty(value)) return -1;
+
+    for (i = 0; value[i] != '\0'; i++) {
+        if (!isdigit(value[i])) return 0;
+    }
+    return 1;
+}
+
+// Comprobe if an email is valid
+int is_valid_email(char email[]){
+    int length = strlen(email), i;
+    int hasAt = 0, hasDot = 0;
+
+    if(length < 5) return 0;
+
+    for(i=0;i<length;i++){
+        if(email[i] == '@' && i > 0) hasAt = 1;
+        if(email[i] == '.' && i > 0 && i+1 < length) hasDot = 1;
+    }
+
+    return hasAt && hasDot;
+}

@@ -36,10 +36,10 @@ int login(){
         if(i==2) printf(" - ULTIMO INTENTO\n\n");
         else printf("\n\n");
 
-        printf("> Ingrese su usuario: ");
+        printf(" > Ingrese su usuario: ");
         scanf("%s", &user);
 
-        printf("> Ingrese su contrase%ca: ", 164);
+        printf(" > Ingrese su contrase%ca: ", 164);
         scanf("%s", &passwd);
 
         int usr_indx = find_user(user);
@@ -49,7 +49,7 @@ int login(){
         }
 
         if(strcmp(passwd, users[usr_indx].passwd) == 0){
-            success("Acceso concedido.\n\t          Bienvenido %s", user);
+            success("Acceso concedido.\n          Bienvenido %s", user);
 
             return 1;
         }else{
