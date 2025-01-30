@@ -44,16 +44,22 @@ int login(){
 
         int usr_indx = find_user(user);
         if(usr_indx < 0){
+            clear();
             error("Usuario no encontrado");
+            clear();
             continue;
         }
 
         if(strcmp(passwd, users[usr_indx].passwd) == 0){
+            clear();
             success("Acceso concedido.\n          Bienvenido %s", user);
+            clear();
 
             return 1;
         }else{
+            clear();
             error("Contrase%ca incorrecta", 164);
+            clear();
         }
     }
 

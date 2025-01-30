@@ -16,13 +16,7 @@ char logo_chars[][69] =
         " (______/   (_______/      \\_/       \\______/   /_/    \\_\\   \\____/  "
     };
 
-// Move the cursos to the selected coords
-void gotoxy(int x, int y) {
-    COORD coo;
-    coo.X = x;
-    coo.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coo);
-}
+
 
 // Show the logo in the console and wait for 10 seconds
 void draw_logo(){
@@ -40,14 +34,16 @@ void draw_logo(){
         current_row++;
     }
 
+    printf("\n\n");
     int timer = 5;
     for(i=0;i<timer;i++){
-        gotoxy(current_col, current_row+1);
-        printf("====================== ");
+        printf("\r      ====================== ");
         printf("Inicializando en %i... ", timer-i);
-        printf("======================\n");
+        printf("======================");
         sleep(1);
     }
+
+    printf("\n");
 
     clear();
 }

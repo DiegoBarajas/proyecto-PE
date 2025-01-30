@@ -1,19 +1,20 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <conio.h>
+#include <time.h>
+#include <stdlib.h>
 
 #define TOTAL_CLIENTS 100
 
 // Struct Client
 struct Client {
+    int folio;
     char name[100];
     char lastname[100];
-    char account[16];
-    char date[20];
+    char date[11];
     char email[50];
-    char phone[10];
-    char telephone[10];
-    char contact[10];
-    char folios[100];
+    char phone[11];
+    char contact[100];
 };
 
 // Globals
@@ -30,16 +31,20 @@ void add_client() {
 
     char name[100];
     char lastname[100];
-    char account[16];
+    int folio;
     char date[20], day[3], year[5], month[3];
     char email[50];
     char phone[11];
-    char telephone[11];
-    char contact[11];
-    char folios[100];
+    char contact[100];
 
     clear();
     printf("\n[ CLIENTE ] Agregar nuevo cliente.\n\n");
+
+    // Generate folio
+    srand(time(NULL));
+    do{
+        folio = 100 + rand() % (9999 - 100+1);
+    }while(search_by_folio(folio) > -1);
 
     // NAME
     while(1){
@@ -57,73 +62,15 @@ void add_client() {
         printf(" > Ingrese el/los apellido/s del cliente: ");
         gets(lastname);
 
-        if(!is_empty(name)) break;
+        if(!is_empty(lastname)) break;
         printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
     }
 
-    // ACCOUNT
-    while(1){
-        flush();
-        printf(" > Ingrese el numero de cuenta del cliente: ");
-        gets(account);
-
-        if(search_by_account(account) >= 0){
-            printf("\n[ ERROR ] Ese numero de cuenta ya fue registrado.\n");
-            continue;
-        }
-        if(is_number(account) == 1) break;
-        else if(is_number(account) == 0) printf("\n[ ERROR ] Solo puedes ingresar numeros.\n");
-        else printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
-    }
-
     // DATE
-    while(1){
-        flush();
-        printf(" > Ingrese el dia de registro (dd): ");
-        scanf("%s", &day);
+    time_t t = time(NULL);
+    struct tm *fecha = localtime(&t);
 
-        if(is_number(day) == 1){
-            int dd = atoi(day);
-            if(dd <= 0 || dd > 31) printf("\n[ ERROR ] El dia debe ser un valor mayor que 0 y menor o igual que 31.\n");
-            else break;
-        }
-        else if(is_number(day) == 0) printf("\n[ ERROR ] Solo puedes ingresar numeros.\n");
-        else printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
-    }
-
-    while(1){
-        flush();
-        printf(" > Ingrese el mes de registro (mm): ");
-        scanf("%s", &month);
-
-        if(is_number(month) == 1){
-            int mm = atoi(month);
-            if(mm <= 0 || mm > 12) printf("\n[ ERROR ] El mes debe ser un valor mayor que 0 y menor o igual que 12.\n");
-            else break;
-        }
-        else if(is_number(month) == 0) printf("\n[ ERROR ] Solo puedes ingresar numeros.\n");
-        else printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
-    }
-
-    while(1){
-        flush();
-        printf(" > Ingrese el a%co de registro (aaaa): ", 164);
-        scanf("%s", &year);
-
-        if(is_number(year) == 1){
-            int yy = atoi(year);
-            if(yy <= 1900) printf("\n[ ERROR ] El a%co es incorrecto, asegurese que este sea correcto.\n", 164);
-            else break;
-        }
-        else if(is_number(year) == 0) printf("\n[ ERROR ] Solo puedes ingresar numeros.\n");
-        else printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
-    }
-
-    strcpy(date, day);
-    strcat(date, "-");
-    strcat(date, month);
-    strcat(date, "-");
-    strcat(date, year);
+    strftime(date, sizeof(date), "%d-%m-%Y", fecha);
 
     // EMAIL
     while(1){
@@ -136,51 +83,80 @@ void add_client() {
     }
 
     // PHONE
-    while(1){
-        flush();
-        printf(" > Ingrese el numero de telefono movil (10 digitos): ");
-        gets(phone);
+    while (1) {
+        int i = 0;
+        memset(phone, '_', 10);
+        phone[10] = '\0';
 
-        if(is_number(phone) == 1 && strlen(phone) == 10) break;
+        printf(" > Ingrese el numero de telefono movil (10 digitos): %s", phone);
+
+        while (i < 10) {
+            flush();
+            char ch = getch();
+
+            if (ch >= '0' && ch <= '9') {
+                phone[i] = ch;
+                printf("\r > Ingrese el numero de telefono movil (10 digitos): %s", phone);
+                i++;
+            } else if (ch == 8 && i > 0) {
+                i--;
+                phone[i] = '_';
+                printf("\r > Ingrese el numero de telefono movil (10 digitos): %s", phone);
+            }
+        }
+
+        printf("\n");
+
+        if (is_number(phone) && strlen(phone) == 10) break;
         printf("\n[ ERROR ] El numero debe tener exactamente 10 digitos numericos.\n");
-    }
-
-    // TELEPHONE (OPCIONAL)
-    flush();
-    printf(" > Ingrese el numero de telefono fijo (opcional, 10 digitos numericos): ");
-    gets(telephone);
-    if(strlen(telephone) > 0 && (is_number(telephone) == 0 || strlen(telephone) != 10)){
-        printf("\n[ ERROR ] El numero debe tener exactamente 10 digitos o estar vacio.\n");
-        telephone[0] = '\0'; // Limpiar el valor si es incorrecto
     }
 
     // CONTACT
     while(1){
         flush();
-        printf(" > Ingrese el numero de contacto de emergencia (10 digitos numericos): ");
+        printf(" > Ingrese la informacion de contacto de emergencia (libre): ");
         gets(contact);
 
-        if(is_number(contact) == 1 && strlen(contact) == 10) break;
-        printf("\n[ ERROR ] El numero debe tener exactamente 10 digitos numericos.\n");
+        if(!is_empty(contact)) break;
+        printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
     }
 
-    strcpy(clients[current_clients].name, name);
-    strcpy(clients[current_clients].lastname, lastname);
-    strcpy(clients[current_clients].account, account);
-    strcpy(clients[current_clients].date, date);
-    strcpy(clients[current_clients].email, email);
-    strcpy(clients[current_clients].phone, phone);
-    strcpy(clients[current_clients].telephone, telephone);
-    strcpy(clients[current_clients].contact, contact);
+    clear();
+    printf("\n[ CLIENTE ] Se agregara el siguiente cliente:\n");
+    printf("[ ALTA ] FOLIO: #%d", folio);
+    printf("\n\tNombre(s):   %s", name);
+    printf("\n\tApellido(s): %s", lastname);
+    printf("\n\tCelular:     %s", phone);
+    printf("\n\tEmail:       %s", email);
+    printf("\n\tContacto:    %s\n\n", contact);
 
-    current_clients++;
-    success("Cliente registrado con exito!");
+    if(confirm("Desea continuar")){
+        strcpy(clients[current_clients].name, name);
+        strcpy(clients[current_clients].lastname, lastname);
+        clients[current_clients].folio = folio;
+        strcpy(clients[current_clients].date, date);
+        strcpy(clients[current_clients].email, email);
+        strcpy(clients[current_clients].phone, phone);
+        strcpy(clients[current_clients].contact, contact);
+
+        current_clients++;
+        clear();
+        success("Cliente registrado con exito!");
+        show_client(current_clients-1);
+        clear();
+    }else{
+        clear();
+        info("Operacion cancelada");
+        clear();
+    }
 }
 
 // Print all regustered clients
 void show_all_clients() {
     if(current_clients == 0){
+        clear();
         info("No hay ningun cliente almacenado");
+        clear();
         return;
     }
 
@@ -195,19 +171,76 @@ void show_all_clients() {
 
 // Delete a client
 void delete_client() {
+    if(current_clients == 0){
+        clear();
+        warning("No hay ningun cliente registrado.");
+        clear();
+        return;
+    }
 
+    int i, index;
+    char folio[10];
+
+    clear();
+    printf("\n[ BAJA ] Eliminar un cliente\n\n");
+
+    for(i=0;i<3;i++){
+        flush();
+
+        printf(" > Ingrese el folio del cliente: ");
+        gets(folio);
+
+        if(is_number(folio) < 1) {
+            printf("\n[ ERROR ] Debes ingresar un numero.\n");
+            continue;
+        }
+
+        int f = atoi(folio);
+        index = search_by_folio(f);
+
+        if(index == -1){
+            printf("\n[ ERROR ] No se encontro un cliente con el folio %d.\n", f);
+            continue;
+        }
+
+        clear();
+        printf("\n[ BAJA ] Folio: %d\n", f);
+        printf("\tNombre(s):      %s\n", clients[index].name);
+        printf("\tApellido(s):    %s\n", clients[index].lastname);
+        printf("\tFecha registro: %s\n", clients[index].date);
+        printf("\tCorreo:         %s\n", clients[index].email);
+        printf("\tCelular:        %s\n", clients[index].phone);
+        printf("\tContacto:       %s\n\n", clients[index].contact);
+
+        if(confirm("Se eliminara el cliente, desea continuar?")){
+            clear();
+            success("Se elimino el cliente con folio #%i", f);
+            clear();
+        }else{
+            clear();
+            info("Operacion cancelada");
+            clear();
+        }
+
+        return;
+    }
+
+    clear();
+    error("Has excedido el numero de intentos permitidos");
+    clear();
 }
 
 // Update data from a client
 void update_client() {
+
 }
 
 // Get index from a client
-int search_by_account(char account[]){
+int search_by_folio(int folio){
     int i;
 
     for(i=0;i<current_clients;i++){
-        if(strcmp(clients[i].account, account) == 0) return i;
+        if(clients[i].folio == folio) return i;
     }
 
     return -1;
@@ -215,13 +248,11 @@ int search_by_account(char account[]){
 
 // Show only one client
 void show_client(int index){
-    printf("[ CLIENTE ] #%i\n", index+1);
+    printf("[ CLIENTE ] Folio: %d\n", clients[index].folio);
     printf("\tNombre(s):      %s\n", clients[index].name);
     printf("\tApellido(s):    %s\n", clients[index].lastname);
-    printf("\tNum. Cuenta:    %s\n", clients[index].account);
     printf("\tFecha registro: %s\n", clients[index].date);
     printf("\tCorreo:         %s\n", clients[index].email);
     printf("\tCelular:        %s\n", clients[index].phone);
-    printf("\tTelefono:       %s\n", clients[index].telephone);
     printf("\tContacto:       %s\n\n", clients[index].contact);
 }

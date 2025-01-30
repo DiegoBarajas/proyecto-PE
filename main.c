@@ -12,7 +12,9 @@ void main(){
 
     int loggued = login();
     if(!loggued){
+        clear();
         warning("Ha excedido el limite de intentos permitidos");
+        clear();
         return;
     }
 
@@ -43,16 +45,21 @@ void main(){
 
 
             case 'f':
+                clear();
                 if(confirm("Esta seguro que desea salir?")){
                     clear();
                     info("Cerrando...\n            Hasta la proxima.");
                     return;
                 }
+                clear();
                 info("Operacion cancelada.");
+                clear();
                 break;
 
             default:
+                clear();
                 warning("'%c' No es una opcion valida", opt);
+                clear();
 
         }
     }
@@ -89,11 +96,16 @@ void client() {
                 tries = 0;
                 break;
 
-            case 's': info("Volviendo al menu principal.");
+            case 's':
+                    clear();
+                    info("Volviendo al menu principal.");
+                    clear();
                 return;
 
             default:
+                clear();
                 warning("'%c' No es una opcion valida", opt);
+                clear();
                 tries++;
         }
     }

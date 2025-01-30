@@ -14,6 +14,14 @@ int is_empty(char value[]);
 int is_empty(char value[]);
 int is_valid_email(char email[]);
 
+// Move the cursos to the selected coords
+void gotoxy(int x, int y) {
+    COORD coo;
+    coo.X = x;
+    coo.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coo);
+}
+
 // Clear console
 void clear(){
     system("cls");
@@ -48,7 +56,6 @@ void color(char color){
 
 // Show an Error in console with formatted text
 void error(const char *format, ...){
-    clear();
     color('R');
 
     va_list args;
@@ -60,12 +67,10 @@ void error(const char *format, ...){
     printf("\n\n");
     pause();
     color('W');
-    clear();
 }
 
 // Show success message in console with formatted text
 void success(const char *format, ...){
-    clear();
     color('g');
 
     va_list args;
@@ -77,12 +82,10 @@ void success(const char *format, ...){
     printf("\n\n");
     pause();
     color('W');
-    clear();
 }
 
 // Show Warning message in console with formatted text
 void warning(const char *format, ...){
-    clear();
     color('y');
 
     va_list args;
@@ -94,12 +97,10 @@ void warning(const char *format, ...){
     printf("\n\n");
     pause();
     color('W');
-    clear();
 }
 
 // Show Log message in console with formatted text
 void info(const char *format, ...){
-    clear();
     color('b');
 
     va_list args;
@@ -111,7 +112,6 @@ void info(const char *format, ...){
     printf("\n\n");
     pause();
     color('W');
-    clear();
 }
 
 // Make a question for a confirmation
@@ -123,22 +123,21 @@ int confirm(const char *format, ...){
     va_start(args, format);
 
     for(i=0;i<3;i++){
-        clear();
         flush();
 
         printf("\n[ CONFIRMAR ] ");
         vprintf(format, args);
         va_end(args);
-        printf("\n\t[ S/Y/A/1 ] Aceptar");
-        printf("\n\t[ N/C/X/0 ] Cancelar");
+        printf("\n\t[ A ] Aceptar (predeterminado)");
+        printf("\n\t[ c ] Cancelar");
         printf("\n\n > Ingrese su opcion: ");
         scanf("%c", &opt);
 
         switch(opt){
-            case 'S':case 's':case 'y':case 'Y':case 'a':case 'A':case '1':
+            case 'A':case 'a':case '1': case '\n':
                 return 1;
 
-            case 'N':case 'n':case 'C':case 'c':case 'x':case 'X':case '0':
+            case 'C':case 'c':case '0':
                 return 0;
 
             default:
@@ -187,3 +186,4 @@ int is_valid_email(char email[]){
 
     return hasAt && hasDot;
 }
+
