@@ -18,8 +18,26 @@ struct Client {
 };
 
 // Globals
-struct Client clients[TOTAL_CLIENTS];
-int current_clients = 0;
+struct Client clients[TOTAL_CLIENTS] = {
+    {
+      1234,
+      "Diego",
+      "Barajas",
+      "05-02-2025",
+      "desaubv@gmail.com",
+      "3313993250",
+      "Iris: 3331306076"
+    },{
+      2197,
+      "Esau",
+      "Velez",
+      "05-02-2025",
+      "desaubv@hotmail.com",
+      "3313993250",
+      "Victor: 3312129565"
+    }
+};
+int current_clients = 2;
 
 /* Functions */
 // Add a new client
@@ -213,6 +231,7 @@ void delete_client() {
         printf("\tContacto:       %s\n\n", clients[index].contact);
 
         if(confirm("Se eliminara el cliente, desea continuar?")){
+            drop_client(index);
             clear();
             success("Se elimino el cliente con folio #%i", f);
             clear();
@@ -255,4 +274,17 @@ void show_client(int index){
     printf("\tCorreo:         %s\n", clients[index].email);
     printf("\tCelular:        %s\n", clients[index].phone);
     printf("\tContacto:       %s\n\n", clients[index].contact);
+}
+
+int drop_client(int index) {
+    if(index < 0 || index > current_clients){
+        return 0;
+    }
+
+    int i;
+    for(i=index;i<current_clients;i++){
+        clients[i] = clients[i+1];
+    }
+
+    current_clients--;
 }

@@ -13,6 +13,8 @@ void flush();
 int is_empty(char value[]);
 int is_empty(char value[]);
 int is_valid_email(char email[]);
+int getConsoleWidth();
+
 
 // Move the cursos to the selected coords
 void gotoxy(int x, int y) {
@@ -187,3 +189,30 @@ int is_valid_email(char email[]){
     return hasAt && hasDot;
 }
 
+// Función para obtener la posición X (columna) del cursor
+int getCursorX() {
+    int x, y;
+    printf("\033[6n"); // Envía código ANSI para solicitar la posición del cursor
+    fflush(stdout);
+    if (scanf("\033[%d;%dR", &y, &x) == 2) {
+        return x;
+    }
+    return -1; // Error al obtener la posición
+}
+
+// Función para obtener la posición Y (fila) del cursor
+int getCursorY() {
+    int x, y;
+    printf("\033[6n");
+    fflush(stdout);
+    if (scanf("\033[%d;%dR", &y, &x) == 2) {
+        return y;
+    }
+    return -1; // Error al obtener la posición
+}
+
+int getConsoleWidth() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    return csbi.srWindow.Right - csbi.srWindow.Left + 1;
+}

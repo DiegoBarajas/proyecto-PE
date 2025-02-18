@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <windows.h>
+#include <time.h>
+#include <pthread.h>
+
 
 void client();
 void service();
@@ -7,8 +10,34 @@ void payment();
 void storage();
 void other();
 
+void *showClock(){
+    while(1){
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        int initial_x = csbi.dwCursorPosition.X;
+        int initial_y = csbi.dwCursorPosition.Y;
+        time_t now = time(NULL);
+        struct tm *local = localtime(&now);
+
+        gotoxy(getConsoleWidth() - 12, 0);
+        printf("[ %02d:%02d:%02d ]", local->tm_hour, local->tm_min, local->tm_sec);
+        gotoxy(getConsoleWidth() - 12, 1);
+        printf(" %02d-%02d-%04d ", local->tm_mday, local->tm_mon+1, local->tm_year+1900);
+        printf("\n");
+
+        gotoxy(initial_x, initial_y);
+
+        sleep(1);
+    }
+}
+
+
+
 void main(){
+    pthread_t thread_id;
+
     draw_logo();
+    pthread_create(&thread_id, NULL, showClock, NULL);
 
     int loggued = login();
     if(!loggued){
