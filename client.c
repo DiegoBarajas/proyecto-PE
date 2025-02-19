@@ -251,8 +251,128 @@ void delete_client() {
 
 // Update data from a client
 void update_client() {
+    if(current_clients == 0){
+        clear();
+        warning("No hay ningun cliente registrado.");
+        clear();
+        return;
+    }
 
+    int i, index;
+    char folio[10];
+
+    clear();
+    printf("\n[ ACTUALIZAR ] Modificar un cliente\n\n");
+
+    for(i=0;i<3;i++){
+        flush();
+        printf(" > Ingrese el folio del cliente: ");
+        gets(folio);
+
+        if(is_number(folio) < 1) {
+            printf("\n[ ERROR ] Debes ingresar un numero.\n");
+            continue;
+        }
+
+        int f = atoi(folio);
+        index = search_by_folio(f);
+
+        if(index == -1){
+            printf("\n[ ERROR ] No se encontro un cliente con el folio %d.\n", f);
+            continue;
+        }
+
+        clear();
+        printf("\n[ CLIENTE ACTUAL ]\n");
+        show_client(index);
+
+        char name[100], lastname[100], email[50], phone[11], contact[100];
+        int phone_chngd = 1;
+
+        printf("\n[ Nombre actual: %s ]\n", clients[index].name);
+        printf(" > Ingrese el nuevo nombre (dejar vacio para conservar): ");
+        gets(name);
+
+        printf("\n[ Apellido actual: %s ]\n", clients[index].lastname);
+        printf(" > Ingrese el nuevo apellido (dejar vacio para conservar): ");
+        gets(lastname);
+
+        printf("\n[ Email actual: %s ]\n", clients[index].email);
+        printf(" > Ingrese el nuevo email (dejar vacio para conservar): ");
+        gets(email);
+
+        printf("\n[ Telefono actual: %s ]\n", clients[index].phone);
+        while (1) {
+            int i = 0;
+            memset(phone, '_', 10);
+            phone[10] = '\0';
+
+            printf(" > Ingrese el nuevo numero de telefono movil (10 digitos): %s", phone);
+
+            while (i < 10) {
+                flush();
+                char ch = getch();
+
+                if((ch == 13) && (i == 0)){
+                    phone_chngd = 0;
+                    break;
+                }
+                if (ch >= '0' && ch <= '9') {
+                    phone[i] = ch;
+                    printf("\r > Ingrese nuevo el numero de telefono movil (10 digitos): %s", phone);
+                    i++;
+                } else if (ch == 8 && i > 0) {
+                    i--;
+                    phone[i] = '_';
+                    printf("\r > Ingrese nuevo el numero de telefono movil (10 digitos): %s", phone);
+                }
+            }
+
+            printf("\n");
+
+            if (!phone_chngd) break;
+            if (is_number(phone) && strlen(phone) == 10) break;
+            printf("\n[ ERROR ] El numero debe tener exactamente 10 digitos numericos.\n");
+        }
+
+        printf("\n[ Contacto actual: %s ]\n", clients[index].contact);
+        printf(" > Ingrese la nueva informacion de contacto (dejar vacio para conservar): ");
+        gets(contact);
+
+        clear();
+        printf("\n[ CONFIRMACION DE CAMBIOS ]\n");
+        printf(" > Nombre: %s -> %s\n", clients[index].name, is_empty(name) ? clients[index].name : name);
+        printf(" > Apellido: %s -> %s\n", clients[index].lastname, is_empty(lastname) ? clients[index].lastname : lastname);
+        printf(" > Email: %s -> %s\n", clients[index].email, is_valid_email(email) ? email : clients[index].email);
+        printf(" > Telefono: %s -> %s\n", clients[index].phone, (is_number(phone) && strlen(phone) == 10) ? phone : clients[index].phone);
+        printf(" > Contacto: %s -> %s\n", clients[index].contact, is_empty(contact) ? clients[index].contact : contact);
+
+        if(confirm("Desea aplicar los cambios?")) {
+            if(!is_empty(name)) strcpy(clients[index].name, name);
+            if(!is_empty(lastname)) strcpy(clients[index].lastname, lastname);
+            if(is_valid_email(email)) strcpy(clients[index].email, email);
+            if(is_number(phone) && strlen(phone) == 10) strcpy(clients[index].phone, phone);
+            if(!is_empty(contact)) strcpy(clients[index].contact, contact);
+
+            clear();
+            success("Cliente actualizado con exito!");
+            show_client(index);
+        } else {
+            clear();
+            warning("Operacion cancelada, no se realizaron cambios.");
+        }
+
+        clear();
+        return;
+    }
+
+    clear();
+    error("Has excedido el numero de intentos permitidos");
+    clear();
 }
+
+
+
 
 // Get index from a client
 int search_by_folio(int folio){
@@ -276,6 +396,7 @@ void show_client(int index){
     printf("\tContacto:       %s\n\n", clients[index].contact);
 }
 
+// Delete a client by index
 int drop_client(int index) {
     if(index < 0 || index > current_clients){
         return 0;

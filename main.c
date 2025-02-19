@@ -121,7 +121,7 @@ void client() {
                 tries = 0;
                 break;
 
-            case 'd': update_client();
+            case 'e': update_client();
                 tries = 0;
                 break;
 
