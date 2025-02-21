@@ -47,6 +47,7 @@ void main(){
     }
 
     char opt;
+    add_dev_clients();
 
     while(1){
         opt = main_menu();

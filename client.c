@@ -417,7 +417,7 @@ void show_client(int folio){
     return error("No se encontro el cliente");
 }
 
-// Show only one client
+// Show lastone client
 void show_last_client(){
     if(!head) return error("No se encontro el cliente");
     printf("[ CLIENTE ] Folio: %d\n", head->folio);
@@ -429,6 +429,7 @@ void show_last_client(){
     printf("\tContacto:       %s\n\n", head->client.contact);
 }
 
+// Comprobe id exists a client by folio
 int exists_node(int folio) {
     Node *current = head;
 
@@ -440,7 +441,7 @@ int exists_node(int folio) {
     return 0;
 }
 
-// Function to find a node by folio
+// Find a node by folio
 Node* find_node(int folio) {
     Node *current = head;
 
@@ -452,4 +453,33 @@ Node* find_node(int folio) {
     }
 
     return NULL;
+}
+
+void add_dev_clients() {
+    struct Client c1 = {
+      "Diego",
+      "Barajas",
+      "05-02-2025",
+      "desaubv@gmail.com",
+      "3313993250",
+      "Iris: 3331306076"
+    }, c2 = {
+      "Esau",
+      "Velez",
+      "07-02-2025",
+      "desaubv2@gmail.com",
+      "3326150831",
+      "Jonas: 3331223076"
+    }, c3 = {
+      "Lizeth",
+      "Velazquez",
+      "15-02-2025",
+      "lizethvelazquez49@gmail.com",
+      "3331209909",
+      "Angelica: angelica@gmail.com"
+    };
+
+    add_node(1234, c1);
+    add_node(1487, c2);
+    add_node(831, c3);
 }
