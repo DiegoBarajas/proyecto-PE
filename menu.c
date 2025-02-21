@@ -8,12 +8,12 @@ char main_menu(){
     clear();
 
     printf("\n[ MENU ] Seleccione la opcion deseada");
-    printf("\n\t[ A ] Cliente");
-    printf("\n\t[ B ] Servicio");
-    printf("\n\t[ C ] Pago");
-    printf("\n\t[ D ] Almacen");
-    printf("\n\t[ E ] Otro");
-    printf("\n\t[ F ] Salir");
+    printf("\n\t[ C ] Cliente");
+    printf("\n\t[ S ] Servicio");
+    printf("\n\t[ P ] Pago");
+    printf("\n\t[ A ] Almacen");
+    printf("\n\t[ O ] Otro");
+    printf("\n\t[ X ] Salir");
 
     printf("\n\n> Ingrese su opcion: ");
     scanf("%c", &opt);
@@ -30,9 +30,9 @@ char client_menu(){
     printf("\n[ CLIENTE ] Seleccione la opcion deseada");
     printf("\n\t[ A ] Alta");
     printf("\n\t[ B ] Baja");
-    printf("\n\t[ C ] Ver todos los clientes");
     printf("\n\t[ E ] Editar");
-    printf("\n\t[ S ] Salir");
+    printf("\n\t[ L ] Listado de clientes");
+    printf("\n\t[ X ] Salir");
 
     printf("\n\n > Ingrese su opcion: ");
     scanf("%c", &opt);

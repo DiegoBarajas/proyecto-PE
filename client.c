@@ -8,7 +8,6 @@
 
 // Struct Client
 struct Client {
-    int folio;
     char name[100];
     char lastname[100];
     char date[11];
@@ -17,36 +16,21 @@ struct Client {
     char contact[100];
 };
 
-// Globals
-struct Client clients[TOTAL_CLIENTS] = {
-    {
-      1234,
-      "Diego",
-      "Barajas",
-      "05-02-2025",
-      "desaubv@gmail.com",
-      "3313993250",
-      "Iris: 3331306076"
-    },{
-      2197,
-      "Esau",
-      "Velez",
-      "05-02-2025",
-      "desaubv@hotmail.com",
-      "3313993250",
-      "Victor: 3312129565"
-    }
-};
-int current_clients = 2;
+// Struct Node
+typedef struct Node {
+    int folio;
+    struct Client client;
+    struct Node *next;
+} Node;
+
+// Head pointer
+Node *head = NULL;
+
+Node* find_node(int folio);
 
 /* Functions */
 // Add a new client
 void add_client() {
-    if(current_clients >= TOTAL_CLIENTS){
-        error("Base de datos llena");
-        return;
-    }
-
     char name[100];
     char lastname[100];
     int folio;
@@ -62,7 +46,7 @@ void add_client() {
     srand(time(NULL));
     do{
         folio = 100 + rand() % (9999 - 100+1);
-    }while(search_by_folio(folio) > -1);
+    }while(exists_node(folio) > 0);
 
     // NAME
     while(1){
@@ -149,18 +133,20 @@ void add_client() {
     printf("\n\tContacto:    %s\n\n", contact);
 
     if(confirm("Desea continuar")){
-        strcpy(clients[current_clients].name, name);
-        strcpy(clients[current_clients].lastname, lastname);
-        clients[current_clients].folio = folio;
-        strcpy(clients[current_clients].date, date);
-        strcpy(clients[current_clients].email, email);
-        strcpy(clients[current_clients].phone, phone);
-        strcpy(clients[current_clients].contact, contact);
+        struct Client new_client;
+        strcpy(new_client.name, name);
+        strcpy(new_client.lastname, lastname);
+        strcpy(new_client.date, date);
+        strcpy(new_client.email, email);
+        strcpy(new_client.phone, phone);
+        strcpy(new_client.contact, contact);
 
-        current_clients++;
+        // Create new client node
+        add_node(folio, new_client);
+
         clear();
         success("Cliente registrado con exito!");
-        show_client(current_clients-1);
+        show_last_client();
         clear();
     }else{
         clear();
@@ -171,17 +157,25 @@ void add_client() {
 
 // Print all regustered clients
 void show_all_clients() {
-    if(current_clients == 0){
+    if(!head){
         clear();
-        info("No hay ningun cliente almacenado");
+        warning("No hay ningun cliente registrado.");
         clear();
         return;
     }
 
-    int i;
+    Node *current = head;
     clear();
-    for(i=0;i<current_clients;i++){
-        show_client(i);
+
+    while (current != NULL) {
+        printf("[ CLIENTE ] Folio: %d\n", current->folio);
+        printf("\tNombre(s):      %s\n", current->client.name);
+        printf("\tApellido(s):    %s\n", current->client.lastname);
+        printf("\tFecha registro: %s\n", current->client.date);
+        printf("\tCorreo:         %s\n", current->client.email);
+        printf("\tCelular:        %s\n", current->client.phone);
+        printf("\tContacto:       %s\n\n", current->client.contact);
+        current = current->next;
     }
 
     pause();
@@ -189,7 +183,7 @@ void show_all_clients() {
 
 // Delete a client
 void delete_client() {
-    if(current_clients == 0){
+    if(!head){
         clear();
         warning("No hay ningun cliente registrado.");
         clear();
@@ -214,24 +208,17 @@ void delete_client() {
         }
 
         int f = atoi(folio);
-        index = search_by_folio(f);
-
-        if(index == -1){
+        if(exists_node(f) == 0){
             printf("\n[ ERROR ] No se encontro un cliente con el folio %d.\n", f);
             continue;
         }
 
         clear();
-        printf("\n[ BAJA ] Folio: %d\n", f);
-        printf("\tNombre(s):      %s\n", clients[index].name);
-        printf("\tApellido(s):    %s\n", clients[index].lastname);
-        printf("\tFecha registro: %s\n", clients[index].date);
-        printf("\tCorreo:         %s\n", clients[index].email);
-        printf("\tCelular:        %s\n", clients[index].phone);
-        printf("\tContacto:       %s\n\n", clients[index].contact);
+        printf("[ BAJA ]/n");
+        show_client(f);
 
         if(confirm("Se eliminara el cliente, desea continuar?")){
-            drop_client(index);
+            drop_node(f);
             clear();
             success("Se elimino el cliente con folio #%i", f);
             clear();
@@ -251,20 +238,20 @@ void delete_client() {
 
 // Update data from a client
 void update_client() {
-    if(current_clients == 0){
+    if(!head) {
         clear();
         warning("No hay ningun cliente registrado.");
         clear();
         return;
     }
 
-    int i, index;
+    int i;
     char folio[10];
 
     clear();
     printf("\n[ ACTUALIZAR ] Modificar un cliente\n\n");
 
-    for(i=0;i<3;i++){
+    for(i=0; i<3; i++) {
         flush();
         printf(" > Ingrese el folio del cliente: ");
         gets(folio);
@@ -275,33 +262,37 @@ void update_client() {
         }
 
         int f = atoi(folio);
-        index = search_by_folio(f);
+        Node *client_node = find_node(f);
 
-        if(index == -1){
+        if(client_node == NULL) {
             printf("\n[ ERROR ] No se encontro un cliente con el folio %d.\n", f);
             continue;
         }
 
         clear();
         printf("\n[ CLIENTE ACTUAL ]\n");
-        show_client(index);
+        show_client(f);  // Show the current data
 
         char name[100], lastname[100], email[50], phone[11], contact[100];
-        int phone_chngd = 1;
+        int phone_changed = 0;
 
-        printf("\n[ Nombre actual: %s ]\n", clients[index].name);
+        // Asking for name
+        printf("\n[ Nombre actual: %s ]\n", client_node->client.name);
         printf(" > Ingrese el nuevo nombre (dejar vacio para conservar): ");
         gets(name);
 
-        printf("\n[ Apellido actual: %s ]\n", clients[index].lastname);
+        // Asking for lastname
+        printf("\n[ Apellido actual: %s ]\n", client_node->client.lastname);
         printf(" > Ingrese el nuevo apellido (dejar vacio para conservar): ");
         gets(lastname);
 
-        printf("\n[ Email actual: %s ]\n", clients[index].email);
+        // Asking for email
+        printf("\n[ Email actual: %s ]\n", client_node->client.email);
         printf(" > Ingrese el nuevo email (dejar vacio para conservar): ");
         gets(email);
 
-        printf("\n[ Telefono actual: %s ]\n", clients[index].phone);
+        // Asking for phone
+        printf("\n[ Telefono actual: %s ]\n", client_node->client.phone);
         while (1) {
             int i = 0;
             memset(phone, '_', 10);
@@ -314,7 +305,7 @@ void update_client() {
                 char ch = getch();
 
                 if((ch == 13) && (i == 0)){
-                    phone_chngd = 0;
+                    phone_changed = 0;
                     break;
                 }
                 if (ch >= '0' && ch <= '9') {
@@ -330,33 +321,34 @@ void update_client() {
 
             printf("\n");
 
-            if (!phone_chngd) break;
+            if (!phone_changed) break;
             if (is_number(phone) && strlen(phone) == 10) break;
             printf("\n[ ERROR ] El numero debe tener exactamente 10 digitos numericos.\n");
         }
 
-        printf("\n[ Contacto actual: %s ]\n", clients[index].contact);
+        // Asking for contact information
+        printf("\n[ Contacto actual: %s ]\n", client_node->client.contact);
         printf(" > Ingrese la nueva informacion de contacto (dejar vacio para conservar): ");
         gets(contact);
 
         clear();
         printf("\n[ CONFIRMACION DE CAMBIOS ]\n");
-        printf(" > Nombre: %s -> %s\n", clients[index].name, is_empty(name) ? clients[index].name : name);
-        printf(" > Apellido: %s -> %s\n", clients[index].lastname, is_empty(lastname) ? clients[index].lastname : lastname);
-        printf(" > Email: %s -> %s\n", clients[index].email, is_valid_email(email) ? email : clients[index].email);
-        printf(" > Telefono: %s -> %s\n", clients[index].phone, (is_number(phone) && strlen(phone) == 10) ? phone : clients[index].phone);
-        printf(" > Contacto: %s -> %s\n", clients[index].contact, is_empty(contact) ? clients[index].contact : contact);
+        printf(" [  Nombre  ] %s -> %s\n", client_node->client.name, is_empty(name) ? client_node->client.name : name);
+        printf(" [ Apellido ] %s -> %s\n", client_node->client.lastname, is_empty(lastname) ? client_node->client.lastname : lastname);
+        printf(" [   Email  ] %s -> %s\n", client_node->client.email, is_valid_email(email) ? email : client_node->client.email);
+        printf(" [ Telefono ] %s -> %s\n", client_node->client.phone, (is_number(phone) && strlen(phone) == 10) ? phone : client_node->client.phone);
+        printf(" [ Contacto ] %s -> %s\n", client_node->client.contact, is_empty(contact) ? client_node->client.contact : contact);
 
         if(confirm("Desea aplicar los cambios?")) {
-            if(!is_empty(name)) strcpy(clients[index].name, name);
-            if(!is_empty(lastname)) strcpy(clients[index].lastname, lastname);
-            if(is_valid_email(email)) strcpy(clients[index].email, email);
-            if(is_number(phone) && strlen(phone) == 10) strcpy(clients[index].phone, phone);
-            if(!is_empty(contact)) strcpy(clients[index].contact, contact);
+            if(!is_empty(name)) strcpy(client_node->client.name, name);
+            if(!is_empty(lastname)) strcpy(client_node->client.lastname, lastname);
+            if(is_valid_email(email)) strcpy(client_node->client.email, email);
+            if(is_number(phone) && strlen(phone) == 10) strcpy(client_node->client.phone, phone);
+            if(!is_empty(contact)) strcpy(client_node->client.contact, contact);
 
             clear();
             success("Cliente actualizado con exito!");
-            show_client(index);
+            show_client(f);
         } else {
             clear();
             warning("Operacion cancelada, no se realizaron cambios.");
@@ -372,40 +364,92 @@ void update_client() {
 }
 
 
+// Function to add a new node
+void add_node(int folio, struct Client client) {
+    printf("1");
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    printf("2");
+    new_node->folio = folio;printf("3");
+    new_node->client = client;printf("4");
+    new_node->next = head;printf("5");
 
+    head = new_node;printf("6");
+}
 
-// Get index from a client
-int search_by_folio(int folio){
-    int i;
+// Function to delete a node by folio
+void drop_node(int folio) {
+    Node *current = head;
+    Node *prev = NULL;
 
-    for(i=0;i<current_clients;i++){
-        if(clients[i].folio == folio) return i;
+    while (current != NULL && current->folio != folio) {
+        prev = current;
+        current = current->next;
     }
 
-    return -1;
+    if (current == NULL) return; // Not found
+
+    if (prev == NULL) {
+        head = current->next;
+    } else {
+        prev->next = current->next;
+    }
+    free(current);
+}
+
+
+// Show only one client
+void show_client(int folio){
+    Node *current = head;
+    while (current != NULL) {
+        if (current->folio == folio) {
+            printf("[ CLIENTE ] Folio: %d\n", current->folio);
+            printf("\tNombre(s):      %s\n", current->client.name);
+            printf("\tApellido(s):    %s\n", current->client.lastname);
+            printf("\tFecha registro: %s\n", current->client.date);
+            printf("\tCorreo:         %s\n", current->client.email);
+            printf("\tCelular:        %s\n", current->client.phone);
+            printf("\tContacto:       %s\n\n", current->client.contact);
+            return;
+        }
+        current = current->next;
+    }
+
+    return error("No se encontro el cliente");
 }
 
 // Show only one client
-void show_client(int index){
-    printf("[ CLIENTE ] Folio: %d\n", clients[index].folio);
-    printf("\tNombre(s):      %s\n", clients[index].name);
-    printf("\tApellido(s):    %s\n", clients[index].lastname);
-    printf("\tFecha registro: %s\n", clients[index].date);
-    printf("\tCorreo:         %s\n", clients[index].email);
-    printf("\tCelular:        %s\n", clients[index].phone);
-    printf("\tContacto:       %s\n\n", clients[index].contact);
+void show_last_client(){
+    if(!head) return error("No se encontro el cliente");
+    printf("[ CLIENTE ] Folio: %d\n", head->folio);
+    printf("\tNombre(s):      %s\n", head->client.name);
+    printf("\tApellido(s):    %s\n", head->client.lastname);
+    printf("\tFecha registro: %s\n", head->client.date);
+    printf("\tCorreo:         %s\n", head->client.email);
+    printf("\tCelular:        %s\n", head->client.phone);
+    printf("\tContacto:       %s\n\n", head->client.contact);
 }
 
-// Delete a client by index
-int drop_client(int index) {
-    if(index < 0 || index > current_clients){
-        return 0;
+int exists_node(int folio) {
+    Node *current = head;
+
+    while (current != NULL) {
+        if (current->folio == folio) return 1;
+        current = current->next;
     }
 
-    int i;
-    for(i=index;i<current_clients;i++){
-        clients[i] = clients[i+1];
+    return 0;
+}
+
+// Function to find a node by folio
+Node* find_node(int folio) {
+    Node *current = head;
+
+    while (current != NULL) {
+        if (current->folio == folio) {
+            return current;
+        }
+        current = current->next;
     }
 
-    current_clients--;
+    return NULL;
 }

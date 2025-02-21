@@ -3,7 +3,6 @@
 #include <time.h>
 #include <pthread.h>
 
-
 void client();
 void service();
 void payment();
@@ -53,27 +52,27 @@ void main(){
         opt = main_menu();
 
         switch(opt){
-            case 'a': client();
+            case 'c': client();
                 break;
 
 
-            case 'b': service();
+            case 's': service();
                 break;
 
 
-            case 'c': payment();
+            case 'p': payment();
                 break;
 
 
-            case 'd': storage();
+            case 'a': storage();
                 break;
 
 
-            case 'e': other();
+            case 'o': other();
                 break;
 
 
-            case 'f':
+            case 'x':
                 clear();
                 if(confirm("Esta seguro que desea salir?")){
                     clear();
@@ -117,7 +116,7 @@ void client() {
                 tries = 0;
                 break;
 
-            case 'c': show_all_clients();
+            case 'l': show_all_clients();
                 tries = 0;
                 break;
 
@@ -125,7 +124,7 @@ void client() {
                 tries = 0;
                 break;
 
-            case 's':
+            case 'x':
                     clear();
                     info("Volviendo al menu principal.");
                     clear();
