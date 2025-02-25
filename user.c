@@ -30,7 +30,7 @@ int login(){
     for(i=0;i<3;i++){
         clear();
 
-        printf("Bienvenido usuario, favor de iniciar sesion.\n");
+        printf("Bienvenido, favor de iniciar sesion.\n");
         printf("[ Intentos restantes: %i ]", 3-i);
 
         if(i==2) printf(" - ULTIMO INTENTO\n\n");

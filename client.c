@@ -23,10 +23,21 @@ typedef struct {
     struct Client_Node *next;
 } Client_Node;
 
+/* Functions prototypes */
+void add_client();
+void show_all_clients();
+void delete_client();
+void update_client();
+void show_client(int folio);
+void add_client_node(int folio, struct Client client);
+void drop_client_node(int folio);
+void show_last_client();
+Client_Node* find_node(int folio);
+int exists_node(int folio);
+
 // Head pointer
 Client_Node *head = NULL;
 
-Client_Node* find_node(int folio);
 
 /* Functions */
 // Add a new client
@@ -438,38 +449,6 @@ void update_client() {
     clear();
 }
 
-/* NODES FUNCTIONS */
-// Function to add a new node
-void add_client_node(int folio, struct Client client) {
-    Client_Node *new_node = (Client_Node *)malloc(sizeof(Client_Node));
-    new_node->folio = folio;
-    new_node->client = client;
-    new_node->next = head;
-
-    head = new_node;
-}
-
-// Function to delete a node by folio
-void drop_client_node(int folio) {
-    Client_Node *current = head;
-    Client_Node *prev = NULL;
-
-    while (current != NULL && current->folio != folio) {
-        prev = current;
-        current = current->next;
-    }
-
-    if (current == NULL) return; // Not found
-
-    if (prev == NULL) {
-        head = current->next;
-    } else {
-        prev->next = current->next;
-    }
-    free(current);
-}
-
-
 // Show only one client
 void show_client(int folio){
     Client_Node *current = head;
@@ -501,6 +480,37 @@ void show_last_client(){
     printf("\tContacto:       %s\n\n", head->client.contact);
 }
 
+/* NODES FUNCTIONS */
+// Function to add a new node
+void add_client_node(int folio, struct Client client) {
+    Client_Node *new_node = (Client_Node *)malloc(sizeof(Client_Node));
+    new_node->folio = folio;
+    new_node->client = client;
+    new_node->next = head;
+
+    head = new_node;
+}
+
+// Function to delete a node by folio
+void drop_client_node(int folio) {
+    Client_Node *current = head;
+    Client_Node *prev = NULL;
+
+    while (current != NULL && current->folio != folio) {
+        prev = current;
+        current = current->next;
+    }
+
+    if (current == NULL) return; // Not found
+
+    if (prev == NULL) {
+        head = current->next;
+    } else {
+        prev->next = current->next;
+    }
+    free(current);
+}
+
 // Comprobe id exists a client by folio
 int exists_node(int folio) {
     Client_Node *current = head;
@@ -527,6 +537,7 @@ Client_Node* find_node(int folio) {
     return NULL;
 }
 
+/* TMP */
 void add_dev_clients() {
     struct Client c1 = {
       "Diego",

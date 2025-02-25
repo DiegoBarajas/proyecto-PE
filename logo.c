@@ -37,9 +37,9 @@ void draw_logo(){
     printf("\n\n");
     int timer = 5;
     for(i=0;i<timer;i++){
-        printf("\r      ====================== ");
-        printf("Inicializando en %i... ", timer-i);
-        printf("======================");
+        printf("\r      =================== ");
+        printf("Iniciando en %i segundos... ", timer-i);
+        printf("===================");
         sleep(1);
     }
 
