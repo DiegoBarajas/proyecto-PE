@@ -192,12 +192,12 @@ int is_valid_email(char email[]){
 // Función para obtener la posición X (columna) del cursor
 int getCursorX() {
     int x, y;
-    printf("\033[6n"); // Envía código ANSI para solicitar la posición del cursor
+    printf("\033[6n");
     fflush(stdout);
     if (scanf("\033[%d;%dR", &y, &x) == 2) {
         return x;
     }
-    return -1; // Error al obtener la posición
+    return -1;
 }
 
 // Función para obtener la posición Y (fila) del cursor
@@ -211,8 +211,29 @@ int getCursorY() {
     return -1; // Error al obtener la posición
 }
 
+// Obtener la longitud de la consola
 int getConsoleWidth() {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     return csbi.srWindow.Right - csbi.srWindow.Left + 1;
+}
+
+// Obtener la altura de la consola
+int getConsoleHeight() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    return csbi.srWindow.Bottom  - csbi.srWindow.Top + 1;
+}
+
+// Print on console on bottom
+void print_bottom(char text[]){
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    int initial_x = csbi.dwCursorPosition.X;
+    int initial_y = csbi.dwCursorPosition.Y;
+
+    gotoxy(0, getConsoleHeight()-1);
+    printf("\r%s", text);
+
+    gotoxy(initial_x, initial_y);
 }

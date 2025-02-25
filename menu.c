@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#define ESC 27
+
 // Print menu options in the console and returns the selected option
 char main_menu(){
     flush();
@@ -16,8 +18,9 @@ char main_menu(){
     printf("\n\t[ X ] Salir");
 
     printf("\n\n> Ingrese su opcion: ");
-    scanf("%c", &opt);
+    opt = getch();
 
+    if(opt == ESC) return 'x';
     return tolower(opt);
 }
 
@@ -35,7 +38,8 @@ char client_menu(){
     printf("\n\t[ X ] Salir");
 
     printf("\n\n > Ingrese su opcion: ");
-    scanf("%c", &opt);
+    opt = getch();
 
+    if(opt == ESC) return 'x';
     return tolower(opt);
 }

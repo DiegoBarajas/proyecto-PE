@@ -4,7 +4,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define TOTAL_CLIENTS 100
+#define ESC 27
 
 // Struct Client
 struct Client {
@@ -16,17 +16,17 @@ struct Client {
     char contact[100];
 };
 
-// Struct Node
-typedef struct Node {
+// Struct Client Node
+typedef struct {
     int folio;
     struct Client client;
-    struct Node *next;
-} Node;
+    struct Client_Node *next;
+} Client_Node;
 
 // Head pointer
-Node *head = NULL;
+Client_Node *head = NULL;
 
-Node* find_node(int folio);
+Client_Node* find_node(int folio);
 
 /* Functions */
 // Add a new client
@@ -49,14 +49,35 @@ void add_client() {
     }while(exists_node(folio) > 0);
 
     // NAME
-    while(1){
+   while (1) {
+        print_bottom(" PULSE [ESC] PARA CANCELAR");
         flush();
         printf(" > Ingrese el/los nombre/s del cliente: ");
-        gets(name);
 
-        if(!is_empty(name)) break;
+        int i = 0;
+        char ch;
+
+        // Get user input
+        while ((ch = getch()) != '\r') {
+            if (ch == ESC) { // If ESC key pressed, return
+                return 0;
+            }
+            if (ch == '\b' && i > 0) { // Backspace handler
+                printf("\b \b");
+                i--;
+            } else if (i < sizeof(name) - 1) { // Adding chars on name
+                name[i++] = ch;
+                printf("%c", ch);
+            }
+        }
+        name[i] = '\0';
+
+        printf("\n");
+
+        if (!is_empty(name)) break;
         printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
     }
+    print_bottom("                                      ");
 
     // LASTNAME
     while(1){
@@ -142,7 +163,7 @@ void add_client() {
         strcpy(new_client.contact, contact);
 
         // Create new client node
-        add_node(folio, new_client);
+        add_client_node(folio, new_client);
 
         clear();
         success("Cliente registrado con exito!");
@@ -164,7 +185,7 @@ void show_all_clients() {
         return;
     }
 
-    Node *current = head;
+    Client_Node *current = head;
     clear();
 
     while (current != NULL) {
@@ -196,11 +217,38 @@ void delete_client() {
     clear();
     printf("\n[ BAJA ] Eliminar un cliente\n\n");
 
+    // Getting folio
     for(i=0;i<3;i++){
         flush();
+        while (1) {
+            print_bottom(" PULSE [ESC] PARA CANCELAR");
+            flush();
+            printf(" > Ingrese el folio del cliente: ");
 
-        printf(" > Ingrese el folio del cliente: ");
-        gets(folio);
+            int i = 0;
+            char ch;
+
+            // Get user input
+            while ((ch = getch()) != '\r') {
+                if (ch == ESC) { // If ESC key pressed, return
+                    return 0;
+                }
+                if (ch == '\b' && i > 0) { // Backspace handler
+                    printf("\b \b");
+                    i--;
+                } else if (i < sizeof(folio) - 1) { // Adding chars on folio
+                    folio[i++] = ch;
+                    printf("%c", ch);
+                }
+            }
+            folio[i] = '\0';
+
+            printf("\n");
+
+            if (!is_empty(folio)) break;
+            printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
+        }
+        print_bottom("                                      ");
 
         if(is_number(folio) < 1) {
             printf("\n[ ERROR ] Debes ingresar un numero.\n");
@@ -214,11 +262,11 @@ void delete_client() {
         }
 
         clear();
-        printf("[ BAJA ]/n");
+        printf("[ BAJA ]\n");
         show_client(f);
 
         if(confirm("Se eliminara el cliente, desea continuar?")){
-            drop_node(f);
+            drop_client_node(f);
             clear();
             success("Se elimino el cliente con folio #%i", f);
             clear();
@@ -253,8 +301,35 @@ void update_client() {
 
     for(i=0; i<3; i++) {
         flush();
-        printf(" > Ingrese el folio del cliente: ");
-        gets(folio);
+        while (1) {
+            print_bottom(" PULSE [ESC] PARA CANCELAR");
+            flush();
+            printf(" > Ingrese el folio del cliente: ");
+
+            int i = 0;
+            char ch;
+
+            // Get user input
+            while ((ch = getch()) != '\r') {
+                if (ch == ESC) { // If ESC key pressed, return
+                    return 0;
+                }
+                if (ch == '\b' && i > 0) { // Backspace handler
+                    printf("\b \b");
+                    i--;
+                } else if (i < sizeof(folio) - 1) { // Adding chars on folio
+                    folio[i++] = ch;
+                    printf("%c", ch);
+                }
+            }
+            folio[i] = '\0';
+
+            printf("\n");
+
+            if (!is_empty(folio)) break;
+            printf("\n[ ERROR ] Necesitas ingresar un valor.\n");
+        }
+        print_bottom("                                      ");
 
         if(is_number(folio) < 1) {
             printf("\n[ ERROR ] Debes ingresar un numero.\n");
@@ -262,7 +337,7 @@ void update_client() {
         }
 
         int f = atoi(folio);
-        Node *client_node = find_node(f);
+        Client_Node *client_node = find_node(f);
 
         if(client_node == NULL) {
             printf("\n[ ERROR ] No se encontro un cliente con el folio %d.\n", f);
@@ -363,23 +438,21 @@ void update_client() {
     clear();
 }
 
-
+/* NODES FUNCTIONS */
 // Function to add a new node
-void add_node(int folio, struct Client client) {
-    printf("1");
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    printf("2");
-    new_node->folio = folio;printf("3");
-    new_node->client = client;printf("4");
-    new_node->next = head;printf("5");
+void add_client_node(int folio, struct Client client) {
+    Client_Node *new_node = (Client_Node *)malloc(sizeof(Client_Node));
+    new_node->folio = folio;
+    new_node->client = client;
+    new_node->next = head;
 
-    head = new_node;printf("6");
+    head = new_node;
 }
 
 // Function to delete a node by folio
-void drop_node(int folio) {
-    Node *current = head;
-    Node *prev = NULL;
+void drop_client_node(int folio) {
+    Client_Node *current = head;
+    Client_Node *prev = NULL;
 
     while (current != NULL && current->folio != folio) {
         prev = current;
@@ -399,7 +472,7 @@ void drop_node(int folio) {
 
 // Show only one client
 void show_client(int folio){
-    Node *current = head;
+    Client_Node *current = head;
     while (current != NULL) {
         if (current->folio == folio) {
             printf("[ CLIENTE ] Folio: %d\n", current->folio);
@@ -413,7 +486,6 @@ void show_client(int folio){
         }
         current = current->next;
     }
-
     return error("No se encontro el cliente");
 }
 
@@ -431,7 +503,7 @@ void show_last_client(){
 
 // Comprobe id exists a client by folio
 int exists_node(int folio) {
-    Node *current = head;
+    Client_Node *current = head;
 
     while (current != NULL) {
         if (current->folio == folio) return 1;
@@ -442,8 +514,8 @@ int exists_node(int folio) {
 }
 
 // Find a node by folio
-Node* find_node(int folio) {
-    Node *current = head;
+Client_Node* find_node(int folio) {
+    Client_Node *current = head;
 
     while (current != NULL) {
         if (current->folio == folio) {
@@ -479,7 +551,7 @@ void add_dev_clients() {
       "Angelica: angelica@gmail.com"
     };
 
-    add_node(1234, c1);
-    add_node(1487, c2);
-    add_node(831, c3);
+    add_client_node(1234, c1);
+    add_client_node(1487, c2);
+    add_client_node(831, c3);
 }
